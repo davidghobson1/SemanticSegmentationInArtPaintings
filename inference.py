@@ -13,7 +13,7 @@ from core.models import build_feature_extractor, build_classifier
 from core.utils.misc import mkdir, get_color_pallete
 from core.datasets import build_transform
 
-from dram_style_weights.models.gram_embedder import GramEmbedder
+from gram_embedding.models.gram_embedder import GramEmbedder
 
 KN = 500
 

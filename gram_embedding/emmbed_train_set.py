@@ -18,7 +18,7 @@ DEVICE = "cuda:0"
 OUTPUT_DIR = os.path.join('gram_embedding')
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-RELEVANT_DATASETS = ['dram_realism_train', 'dram_impressionism_train', 'dram_post_impressionism_train', 'dram_expressionism_train']
+RELEVANT_DATASETS = ['dram_realism_train']#, 'dram_impressionism_train', 'dram_post_impressionism_train', 'dram_expressionism_train']
 
 gram_embedder = GramEmbedder().to(DEVICE).eval()
 

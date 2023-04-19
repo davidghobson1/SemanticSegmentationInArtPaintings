@@ -9,16 +9,28 @@ from core.datasets.build import build_base_transform_no_cfg
 
 from gram_embedding.models.gram_embedder import GramEmbedder
 
+from argparse import ArgumentParser
+
 MAX_VECS = 2000
 
 N_COMPONENTS = 512
 NUM_WORKERS = 0
-EMBEDDINGS_FILE_NAME = 'trainset_embeddings' + str(N_COMPONENTS)
 DEVICE = "cuda:0"
 OUTPUT_DIR = os.path.join('gram_embedding')
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-RELEVANT_DATASETS = ['dram_realism_train']#, 'dram_impressionism_train', 'dram_post_impressionism_train', 'dram_expressionism_train']
+parser = ArgumentParser(description="Super resolution dataset preparation.")
+
+parser.add_argument('-name', type=str, required=True)
+parser.add_argument('-data-dir', type=str, required=True)
+parser.add_argument('-relevant-datasets', nargs='+', required=True)
+
+args = parser.parse_args()
+
+#RELEVANT_DATASETS = ['dram_realism_train', 'dram_impressionism_train', 'dram_post_impressionism_train', 'dram_expressionism_train']
+
+RELEVANT_DATASETS = args.relevant_datasets
+EMBEDDINGS_FILE_NAME = args.name + str(N_COMPONENTS)
 
 gram_embedder = GramEmbedder().to(DEVICE).eval()
 
@@ -27,7 +39,7 @@ data_loaders = []
 trans = build_base_transform_no_cfg()
 for j, dataset in enumerate(RELEVANT_DATASETS):
     data_split = dataset.split('_')[-1]
-    dataloader = DatasetCatalog.get(dataset, data_split, transform=trans)
+    dataloader = DatasetCatalog.get(dataset, data_split, transform=trans, data_dir=args.data_dir)
 
     train_loader = torch.utils.data.DataLoader(
         dataloader,
@@ -75,5 +87,5 @@ if len(RELEVANT_DATASETS) > 0:
         data = embedded[previous_datasets_lengths: previous_datasets_lengths + data_lengths[i]]
         curr_embeddings[RELEVANT_DATASETS[i]] = data
 
-torch.save(pca, os.path.join(OUTPUT_DIR, 'pca_f'), pickle_protocol=4)
+torch.save(pca, os.path.join(OUTPUT_DIR, f'{args.name}_pca_f'), pickle_protocol=4)
 torch.save(curr_embeddings, os.path.join(OUTPUT_DIR, EMBEDDINGS_FILE_NAME))

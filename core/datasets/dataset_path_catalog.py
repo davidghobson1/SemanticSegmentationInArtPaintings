@@ -173,9 +173,12 @@ class DatasetCatalog(object):
     }
 
     @staticmethod
-    def get(name, mode, num_classes=12, max_iters=None, transform=None):
-        if "pascal_sbd12" in name:
+    def get(name, mode, num_classes=12, max_iters=None, transform=None, data_dir=None):
+        
+        if data_dir is None:
             data_dir = DatasetCatalog.DATASET_DIR
+
+        if "pascal_sbd12" in name:
             attrs = DatasetCatalog.DATASETS[name]
             args = dict(
                 root=os.path.join(data_dir, attrs["data_dir"]),
@@ -184,7 +187,6 @@ class DatasetCatalog(object):
             return PascalSbd12DataSet(args["root"], args["data_list"], max_iters=max_iters, num_classes=num_classes, split=mode, transform=transform)
 
         elif "dram" in name:
-            data_dir = DatasetCatalog.DATASET_DIR
             attrs = DatasetCatalog.DATASETS[name]
             args = dict(
                 root=os.path.join(data_dir, attrs['data_dir']),
@@ -192,7 +194,6 @@ class DatasetCatalog(object):
             return DramDataSet(args["root"], args["movement"], max_iters=max_iters, num_classes=num_classes, split=mode, transform=transform)
 
         elif "cdriving" in name:
-            data_dir = DatasetCatalog.DATASET_DIR
             attrs = DatasetCatalog.DATASETS[name]
             args = dict(
                 root=os.path.join(data_dir, attrs['data_dir']),
